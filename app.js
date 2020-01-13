@@ -14,8 +14,8 @@ app.get("/api/ping", (_, res) => {
 
 app.get("/api/posts", async (req, res) => {
   let { tags, sortBy, direction } = req.query;
-  sortBy = sortBy ? sortBy : "id";
-  direction = direction ? direction : "asc";
+  sortBy = sortBy ? sortBy.trim(" ") : "id";
+  direction = direction ? direction.trim(" ") : "asc";
   const validSortBy = ["id", "reads", "likes", "popularity"];
   const validDirection = ["asc", "desc"];
   const seen = new Set();
@@ -41,7 +41,9 @@ app.get("/api/posts", async (req, res) => {
       await Promise.all(
         tags.map(async tag => {
           response = await axios(
-            `https://hatchways.io/api/assessment/blog/posts?tag=${tag}&sortBy=${sortBy}&direction=${direction}`
+            `https://hatchways.io/api/assessment/blog/posts?tag=${tag.trim(
+              " "
+            )}&sortBy=${sortBy}&direction=${direction}`
           );
           // Removes duplicate results
           return response.data.posts.filter(post => {
